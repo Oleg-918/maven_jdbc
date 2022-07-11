@@ -11,14 +11,14 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class Util {
-    private static Connection conn = null;
+    private static Connection connection = null;
     private static Util instance = null;
 
     private Util() {
         try {
-            if (null == conn || conn.isClosed()) {
+            if (null == connection || connection.isClosed()) {
                 Properties props = getProps();
-                conn = DriverManager
+                connection = DriverManager
                         .getConnection(props.getProperty("db.url"), props.getProperty("db.username"), props.getProperty("db.password"));
             }
         } catch (SQLException | IOException e) {
@@ -34,7 +34,7 @@ public class Util {
     }
 
     public Connection getConnection() {
-        return conn;
+        return connection;
     }
 
     private static Properties getProps() throws IOException {

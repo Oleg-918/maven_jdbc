@@ -2,37 +2,36 @@ package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
-    public static final Connection CONNECTION = Util.getInstance().getConnection();
+    public static final Connection connection = Util.getInstance().getConnection();
 
     public UserDaoJDBCImpl() {
 
     }
-
+    //Создание таблицы
     public void createUsersTable() {
-        try (Statement statement = CONNECTION.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS users " +
                     "(id BIGINT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), last_name VARCHAR(255), age INT)");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
+    //Удаление талбицы, если есть пользователи
     public void dropUsersTable() {
-        try (Statement statement = CONNECTION.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.executeUpdate("DROP TABLE IF EXISTS users");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
+    //Сохранение пользователя
     public void saveUser(String name, String lastName, byte age) {
-        try (PreparedStatement pstm = CONNECTION.prepareStatement("INSERT INTO users (name, last_name, age) VALUES (?, ?, ?)")) {
+        try (PreparedStatement pstm = connection.prepareStatement("INSERT INTO users (name, last_name, age) VALUES (?, ?, ?)")) {
             pstm.setString(1, name);
             pstm.setString(2, lastName);
             pstm.setByte(3, age);
@@ -41,20 +40,20 @@ public class UserDaoJDBCImpl implements UserDao {
             e.printStackTrace();
         }
     }
-
+    //Удаление пользователя
     public void removeUserById(long id) {
-        try (PreparedStatement pstm = CONNECTION.prepareStatement("DELETE FROM users WHERE id = ?")) {
+        try (PreparedStatement pstm = connection.prepareStatement("DELETE FROM users WHERE id = ?")) {
             pstm.setLong(1, id);
             pstm.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
+    //Получение всех пользоватлей
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
 
-        try (ResultSet resultSet = CONNECTION.createStatement().executeQuery("SELECT * FROM users")) {
+        try (ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM users")) {
             while(resultSet.next()) {
                 User user = new User(resultSet.getString("name"),
                         resultSet.getString("last_name"), resultSet.getByte("age"));
@@ -67,9 +66,9 @@ public class UserDaoJDBCImpl implements UserDao {
 
         return users;
     }
-
+    //Удаление всех уёбков
     public void cleanUsersTable() {
-        try (Statement statement = CONNECTION.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.executeUpdate("TRUNCATE TABLE users");
         } catch (SQLException e) {
             e.printStackTrace();

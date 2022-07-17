@@ -12,6 +12,7 @@ import java.util.Properties;
 
 //Класс отвечает за коннект с базой данных.
 public class Util {
+    private Util() {}
     private static Connection connection = null;
     private static Util instance = null;
 

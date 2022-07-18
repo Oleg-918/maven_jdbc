@@ -12,13 +12,17 @@ import java.util.Properties;
 
 //Класс отвечает за коннект с базой данных.
 public class Util {
-    private Util() {}
+    private Util() {
+    }
+
     private static Connection connection = null;
     private static Util instance = null;
 
+    private static Properties props= null;
+
     // Геттер на экземпляр соединения.
     public static Util getInstance() {
-        if (null == instance) {
+        if (instance == null) {
             instance = new Util();
         }
         return instance;
@@ -27,7 +31,7 @@ public class Util {
     //Геттер на экземпляр соединения.
     public Connection getConnection() {
         try {
-            if (null == connection || connection.isClosed()) {
+            if (connection == null || connection.isClosed()) {
                 Properties props = getProps();
                 connection = DriverManager
                         .getConnection(props.getProperty("db.url"), props.getProperty("db.username"), props.getProperty("db.password"));
@@ -38,14 +42,18 @@ public class Util {
         return connection;
     }
 
-    //Геттер на файл с настройками соединения.
     private static Properties getProps() throws IOException {
-       Properties props = new Properties();
-       try (InputStream in = Files.newInputStream(Paths.get((Util.class.getResource("/database.properties").toURI())))) {
-           props.load(in);
-           return props;
-       } catch (IOException | URISyntaxException e) {
-           throw new IOException("Database config file not found");
-       }
-   }
+        try {
+            if (props == null) {
+                props = new Properties();
+                InputStream in = Files.newInputStream(Paths.get("src/main/java/resourse/database.properties"));
+                props.load(in);
+            }
+        } catch (IOException e) {
+            throw new IOException("Database config file not found");
+        }
+        return props;
+    }
 }
+
+
